@@ -23,6 +23,56 @@
 
 #define print(x) std::cout<<x<<std::endl
 
+std::string ParseShader(const std::string& filepath) {
+	std::ifstream stream(filepath);
+	std::stringstream ss;
+	std::string line;
+
+	while (getline(stream, line)) {
+		ss << line << "\n";
+	}
+	return ss.str();
+}
+
+unsigned int CompileShader(unsigned int type, const std::string& source) {
+	unsigned int  id = glCreateShader(type);
+
+	const char* src = source.c_str();
+	glShaderSource(id, 1, &src, nullptr);
+	glCompileShader(id);
+
+	int result;
+	glGetShaderiv(id, GL_COMPILE_STATUS, &result);
+	if (result == GL_FALSE) {
+		int length;
+		glGetShaderiv(id, GL_INFO_LOG_LENGTH, &length);
+		char* message = (char*)alloca(length * sizeof(char));
+		glGetShaderInfoLog(id, length, &length, message);
+		std::cout << "Failed" << (type == GL_VERTEX_SHADER ? "Vertex" : "Fragment") << std::endl;
+		std::cout << message << std::endl;
+		glDeleteShader(id);
+		return 0;
+	}
+	return id;
+}
+
+unsigned int CreateShader(const std::string& vertexShader, const std::string& fragmentShader)
+{
+	unsigned int program = glCreateProgram();
+	unsigned int vs = CompileShader(GL_VERTEX_SHADER, vertexShader);
+	unsigned int fs = CompileShader(GL_FRAGMENT_SHADER, fragmentShader);
+
+	glAttachShader(program, vs);
+	glAttachShader(program, fs);
+	glLinkProgram(program);
+	glValidateProgram(program);
+
+	glDeleteShader(vs);
+	glDeleteShader(fs);
+
+	return program;
+}
+
 struct Vec3
 {
 	float x, y, z;
@@ -142,48 +192,61 @@ int main(void)
 		2,3,0
 	};
 
-	glm::mat4 proj = glm::ortho(0.0f, 1920.f, 0.0f, 1080.0f, -1.0f, 1.0f);
-	glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(-100, 0, 0));
+	glm::mat4 proj = glm::ortho(0.0f,1920.0f, 0.0f, 1080.0f, -1.0f, 1.0f);
+	glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, 0));
 	glm::vec3 translation{ 0,0,0 };
 
 	float vertices[] = {
-	100.0f, 100.0f, 0.0f,1.0f,0.5f,0.5f,1.0f,
-	300.0f, 100.0f, 0.0f,1.0f,0.5f,0.5f,1.0f,
-	300.0f, 200.0f, 0.0f,1.0f,0.5f,0.5f,1.0f,
-	100.0f, 200.0f, 0.0f,1.0f,0.5f,0.5f,1.0f,
+	100.0f, 100.0f, 0.0f, 0.0f,1.0f,1.0f,1.0f,
+	200.0f, 100.0f, 0.0f, 1.0f,1.0f,1.0f,1.0f,
+	200.0f, 200.0f, 0.0f, 1.0f,1.0f,0.0f,1.0f,
+	100.0f, 200.0f, 0.0f, 1.0f,1.0f,1.0f,0.0f,
+
 	};
 
-	// Create Renderer
-	Renderer renderer;
-
 	// Vertex Buffers
-	VertexBuffer vb(vertices, 4 * 7 * sizeof(float),GL_STATIC_DRAW);
+	unsigned int vb;
+	glGenBuffers(1, &vb);
+	glBindBuffer(GL_ARRAY_BUFFER, vb);
+	glBufferData(GL_ARRAY_BUFFER,4* 7 * sizeof(float), vertices, GL_STATIC_DRAW);
 
 	// Vertex Array Setup
-	VertexArray va;
-	VertexBufferLayout layout;
-	layout.Push<float>(3);
-	layout.Push<float>(4);
-	va.AddBuffer(vb, layout);
+	unsigned int va;
+	glGenVertexArrays(1, &va);
+	glBindVertexArray(va);
+
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 7* sizeof(float),0);
+
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 7 * sizeof(float), (const void*)(3 * sizeof(float)));
 
 	// Index buffer must come after Vertex array setup
-	IndexBuffer ib(indices, 6);
+	unsigned int ib;
+	glGenBuffers(1, &ib);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,ib );
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER,6* sizeof( unsigned int), indices, GL_STATIC_DRAW);
 
 	// Shaders
-	Shader shader("res/shader/vertex.shader",
-		"res/shader/fragment.shader");
-	shader.Bind();
-	float r = 0.6f;
-	float increment = 0.05f;
+	std::string VertSource = ParseShader("res/shader/vertex.shader");
+	std::string FragSource = ParseShader("res/shader/fragment.shader");
 
-	//shader.SetUniform4f("u_Color", r, 0.5f, 0.5f, 1.0f);
+	unsigned shader = CreateShader(VertSource, FragSource);
+	glUseProgram(shader);
+	glm::mat4 model = glm::translate(glm::mat4(1.0f), translation);
+
+	glm::mat4 mvp = proj * view * model;
+	int location = glGetUniformLocation(shader, "u_mvp");
+	glUniformMatrix4fv(location, 1, false, &mvp[0][0]);
 
 
 	// Unbind All Buffers
-	shader.Unbind();
-	va.Unbind();
-	vb.Unbind();
-	ib.Unbind();
+
+	glBindVertexArray(0);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+	glUseProgram(0);
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window))
 	{
@@ -205,21 +268,20 @@ int main(void)
 		}
 
 		/* Render here */
+		glClear(GL_COLOR_BUFFER_BIT);
 
-		renderer.Clear();
 
 		glm::mat4 model = glm::translate(glm::mat4(1.0f), translation);
-
 		glm::mat4 mvp = proj * view * model;
+		int location =  glGetUniformLocation(shader, "u_mvp");
+		glUniformMatrix4fv(location, 1, false, &mvp[0][0]);
 
+		glBindVertexArray(va);
+		glBindBuffer(GL_ARRAY_BUFFER, vb);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ib);
 		
-		shader.Bind();
-		//shader.SetUniform4f("u_Color", r, 0.2f, 0.8f, 1.0f);
-		shader.SetUniformMat4f("u_mvp", mvp);
-
-
-		//glDrawElements(GL_TRIANGLES, ib.GetCount(), GL_UNSIGNED_INT, nullptr);
-		renderer.Draw(va, ib, shader);
+		glUseProgram(shader);
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
 
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
