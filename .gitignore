@@ -14,3 +14,12 @@
 *.db
 .vs/OpenGL/v16/Browse.VC.db
 *.db
+*.pdb
+*.exe
+.vs/OpenGL/v16/.suo
+*.pdb
+*.obj
+*.log
+*.tlog
+*.pdb
+*.idb

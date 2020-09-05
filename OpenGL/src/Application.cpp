@@ -208,7 +208,7 @@ int main(void)
 	unsigned int vb;
 	glGenBuffers(1, &vb);
 	glBindBuffer(GL_ARRAY_BUFFER, vb);
-	glBufferData(GL_ARRAY_BUFFER,4* 7 * sizeof(float), vertices, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER,4* 7 * sizeof(float), nullptr, GL_DYNAMIC_DRAW);
 
 	// Vertex Array Setup
 	unsigned int va;
@@ -239,14 +239,10 @@ int main(void)
 	int location = glGetUniformLocation(shader, "u_mvp");
 	glUniformMatrix4fv(location, 1, false, &mvp[0][0]);
 
+	float t = 0;
+
 
 	// Unbind All Buffers
-
-	glBindVertexArray(0);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-
-	glUseProgram(0);
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window))
 	{
@@ -271,16 +267,20 @@ int main(void)
 		glClear(GL_COLOR_BUFFER_BIT);
 
 
-		glm::mat4 model = glm::translate(glm::mat4(1.0f), translation);
-		glm::mat4 mvp = proj * view * model;
-		int location =  glGetUniformLocation(shader, "u_mvp");
-		glUniformMatrix4fv(location, 1, false, &mvp[0][0]);
+		//glm::mat4 model = glm::translate(glm::mat4(1.0f), translation);
+		//glm::mat4 mvp = proj * view * model;
+		//int location =  glGetUniformLocation(shader, "u_mvp");
+		//glUniformMatrix4fv(location, 1, false, &mvp[0][0]);
 
-		glBindVertexArray(va);
-		glBindBuffer(GL_ARRAY_BUFFER, vb);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ib);
+		float vertices[] = {
+			100.0f, 100.0f, 0.0f, 0.0f,1.0f,1.0f,1.0f,
+			200.0f, 100.0f, 0.0f, 1.0f,1.0f,1.0f,1.0f,
+			200.0f, t, 0.0f, 1.0f,1.0f,0.0f,1.0f,
+			100.0f, 200.0f, 0.0f, 1.0f,1.0f,1.0f,0.0f
+		};
+		t++;
+		glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
 		
-		glUseProgram(shader);
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
 
 		ImGui::Render();
