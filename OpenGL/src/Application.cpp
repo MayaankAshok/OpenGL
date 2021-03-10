@@ -40,31 +40,86 @@ struct Vec4
 struct Vertex
 {
 	Vec3 position;
-	Vec4 color;
+	Vec3 normal;
 };
 
-std::array<Vertex, 4> CreateQuad(float x, float y, float w, float h, Vec4 color) {
+float getMagn(Vec3 vec) {
+	return sqrtf(vec.x * vec.x + vec.y * vec.y + vec.z * vec.z);
+}
 
-	Vertex v1;
-	v1.position = { x,y,0 };
-	v1.color = color;
+Vec3 normalize(Vec3 vec) {
+	float magn = getMagn(vec);
+	return { vec.x / magn, vec.y / magn,vec.z / magn };
+}
 
-	Vertex v2;
-	v2.position = { x + w,y,0 };
-	v2.color = color;
+struct Block
+{
+	std::vector<Vertex> vertices = {Vertex{-1.0f,-1.0f,1.0f, -1.0f,-1.0f,1.0f},
+									Vertex{1.0f,-1.0f,1.0f, 1.0f,-1.0f, 1.0f},
+									Vertex{1.0f,1.0f,1.0f, 1.0f,1.0f,1.0f},
+									Vertex{-1.0f,1.0f,1.0f, -1.0f,1.0f,1.0f},
+									Vertex{-1.0f,-1.0f,-1.0f, -1.0f,-1.0f,-1.0f},
+									Vertex{1.0f,-1.0f,-1.0f, 1.0f,-1.0f,-1.0f } ,
+									Vertex{1.0f,1.0f,-1.0f, 1.0f,1.0f,-1.0f},
+									Vertex{-1.0f,1.0f,-1.0f, -1.0f,1.0f,-1.0f} };
+	
+	std::vector<int> indices = {
+		0,1,2,
+		2,3,0,
 
-	Vertex v3;
-	v3.position = { x + w,y + h+100,0 };
-	v3.color = color;
+		1,5,6,
+		6,2,1,
+		
+		7,6,5,
+		5,4,7,
+		
+		4,0,3,
+		3,7,4,
+		
+		4,5,1,
+		1,0,4,
+		
+		3,2,6,
+		6,7,3,
+	};
 
-	Vertex v4;
-	v4.position = { x,y + h,0 };
-	v4.color = color;
+	Block() {
+		for (auto vertex : vertices) {
+			vertex.normal = normalize(vertex.normal);
+			//print(getMagn(vertex.normal));
+		}
 
-	return { v1,v2,v3,v4 };
+	}
+
 
 };
 
+struct Camera
+{
+	glm::vec3 position = { 0,0,10 };
+	glm::vec3 target = { 0.0f,0.0f,0.0f };
+	glm::vec3 direction = glm::normalize(position-target);
+	glm::vec3 up = { 0,1,0 };
+	glm::vec3 camRight  = glm::normalize(glm::cross(up,direction));
+	glm::vec3 camUp = glm::normalize(glm::cross( direction,camRight));
+	glm::vec3 camFront = { 0,0,-1 };
+
+};
+
+void processInput(GLFWwindow* window,Camera &camera) {
+	
+	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+		glfwSetWindowShouldClose(window, true);
+	float cameraSpeed = 0.05f;
+	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+		camera.position += cameraSpeed * camera.camFront;
+	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+		camera.position -= cameraSpeed * camera.camFront;
+	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+		camera.position -= glm::normalize(glm::cross(camera.camFront, camera.camUp)) * cameraSpeed;
+	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+		camera.position += glm::normalize(glm::cross(camera.camFront, camera.camUp)) * cameraSpeed;
+}
 int main(void)
 {
 	GLFWwindow* window;
@@ -93,7 +148,9 @@ int main(void)
 	glfwSwapInterval(1);
 
 	std::cout << glGetString(GL_VERSION) << std::endl;
-
+	glEnable(GL_DEPTH_TEST);
+	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
 	ImGuiIO& io = ImGui::GetIO(); (void)io;
@@ -109,8 +166,8 @@ int main(void)
 	bool show_another_window = false;
 	ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
-
-
+	Block block = Block();
+	Camera camera = Camera();
 	// Create Data for vertices
 	/*
 	float n = 50.0f;
@@ -137,37 +194,45 @@ int main(void)
 	*/
 
 
-	unsigned int indices[] = {
-		0,1,2,
-		2,3,0
-	};
+	//unsigned int indices[] = {
+		//0,1,2,
+		//2,3,0
+	//};
 
-	glm::mat4 proj = glm::ortho(0.0f, 1920.f, 0.0f, 1080.0f, -1.0f, 1.0f);
-	glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(-100, 0, 0));
-	glm::vec3 translation{ 0,0,0 };
+	int* indices = &block.indices[0];
 
-	float vertices[] = {
-	100.0f, 100.0f, 0.0f,1.0f,0.5f,0.5f,1.0f,
-	300.0f, 100.0f, 0.0f,1.0f,0.5f,0.5f,1.0f,
-	300.0f, 200.0f, 0.0f,1.0f,0.5f,0.5f,1.0f,
-	100.0f, 200.0f, 0.0f,1.0f,0.5f,0.5f,1.0f,
-	};
+	glm::mat4 proj = glm::perspective(3.14159f*0.05f, 1.777f, 0.1f, 100.0f);
+	//glm::mat4 proj = glm::ortho(-.96f, .96f, -.54f, .54f,-1.0f, 1.0f);
+	glm::mat4 view = glm::lookAt(camera.position, camera.target, camera.up);
+	glm::vec3 rotation{ 0,0,0 };
+	glm::mat4 model;
+
+	//float vertices[] = {
+	//-0.1f, -0.2f, 0.0f,
+	//0.1f, -0.2f, 0.0f,
+	//0.1f, 0.2f, 0.0f,
+	//-0.1f, 0.2f, 0.0f
+	//};
+
+	print(block.vertices.data());
+	print(&block.vertices[0]);
+	float* vertices = &block.vertices[0].position.x;
 
 	// Create Renderer
 	Renderer renderer;
 
 	// Vertex Buffers
-	VertexBuffer vb(vertices, 4 * 7 * sizeof(float),GL_STATIC_DRAW);
+	VertexBuffer vb(vertices, 8 * 6 * sizeof(float),GL_STATIC_DRAW);
 
 	// Vertex Array Setup
 	VertexArray va;
 	VertexBufferLayout layout;
 	layout.Push<float>(3);
-	layout.Push<float>(4);
+	layout.Push<float>(3);
 	va.AddBuffer(vb, layout);
 
 	// Index buffer must come after Vertex array setup
-	IndexBuffer ib(indices, 6);
+	IndexBuffer ib(indices, 12*3);
 
 	// Shaders
 	Shader shader("res/shader/vertex.shader",
@@ -198,7 +263,7 @@ int main(void)
 			ImGui::Begin("Hello, world!");                          // Create a window called "Hello, world!" and append into it.
 			ImGui::SetWindowFontScale(2);
 
-			ImGui::SliderFloat3("translation", &translation.x, 0.0f, 1000.0f);            // Edit 1 float using a slider from 0.0f to 1.0fton"))                            // Buttons return true when clicked (most widgets return true when edited/activated)
+			ImGui::SliderFloat3("translation", &rotation.x, -1.0f, 1.0f);            // Edit 1 float using a slider from 0.0f to 1.0fton"))                            // Buttons return true when clicked (most widgets return true when edited/activated)
 
 			ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 			ImGui::End();
@@ -208,21 +273,39 @@ int main(void)
 
 		renderer.Clear();
 
-		glm::mat4 model = glm::translate(glm::mat4(1.0f), translation);
+		//if (r > 1 || r < 0) {
+			//increment *= -1;
+		//}
 
-		glm::mat4 mvp = proj * view * model;
+		//r += increment;
+
+		glm::mat4 modelX = glm::rotate(glm::mat4(1.0f), rotation.x, glm::vec3{ 1,0,0 });
+		glm::mat4 modelY = glm::rotate(glm::mat4(1.0f), rotation.y, glm::vec3{ 0,1,0 });
+		glm::mat4 modelZ = glm::rotate(glm::mat4(1.0f), rotation.z, glm::vec3{ 0,0,1 });
+		glm::mat4 modelScale = glm::scale(glm::mat4(1.0f), glm::vec3{ 0.2,0.2,0.2 });
+		glm::mat4 modelTranslate = glm::translate(glm::mat4(1.0f), glm::vec3{ 0,0,-4 });
+
+		view = glm::lookAt(camera.position, camera.position+camera.camFront, camera.up);
+
+
+		model = modelTranslate* modelX * modelY * modelZ* modelScale;
+
+		glm::mat4 mvp = proj * view * modelX * modelZ * modelY * modelScale;
 
 		
 		shader.Bind();
-		//shader.SetUniform4f("u_Color", r, 0.2f, 0.8f, 1.0f);
-		shader.SetUniformMat4f("u_mvp", mvp);
+		shader.SetUniform3f("u_Color", r, 0.2f, 0.8f);
+		shader.SetUniformMat4f("u_model",model);
+		shader.SetUniformMat4f("u_view", view);
+		shader.SetUniformMat4f("u_projection", proj);
 
 
-		//glDrawElements(GL_TRIANGLES, ib.GetCount(), GL_UNSIGNED_INT, nullptr);
 		renderer.Draw(va, ib, shader);
 
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+		processInput(window,camera);
 
 		/* Swap front and back buffers */
 		glfwSwapBuffers(window);
@@ -237,3 +320,4 @@ int main(void)
 	glfwTerminate();
 	return 0;
 }
+
