@@ -8,4 +8,5 @@ private:
 public:
 	void Clear()const;
 	void Draw(VertexArray& va, IndexBuffer& ib, Shader& shader);
+	void Draw(VertexArray& va, Shader& shader);
 };

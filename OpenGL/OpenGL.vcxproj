@@ -454,6 +454,7 @@
     <ClInclude Include="src\vendor\ImGui\imstb_rectpack.h" />
     <ClInclude Include="src\vendor\ImGui\imstb_textedit.h" />
     <ClInclude Include="src\vendor\ImGui\imstb_truetype.h" />
+    <ClInclude Include="src\vendor\stb\stb_image.h" />
     <ClInclude Include="src\VertexArray.h" />
     <ClInclude Include="src\VertexBuffer.h" />
     <ClInclude Include="src\VertexBufferLayout.h" />
@@ -604,6 +605,10 @@
   </ItemGroup>
   <ItemGroup>
     <Font Include="res\fonts\Roboto-Medium.ttf" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="res\textures\DefaultPack.png" />
+    <Image Include="res\textures\wall.jpg" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

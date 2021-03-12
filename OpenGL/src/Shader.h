@@ -17,6 +17,9 @@ public:
 	void Bind() const;
 	void Unbind() const;
 
+
+	void SetUniform2fv(const std::string& name, int count, float* data);
+
 	// Uniforms
 	void SetUniform4f(const std::string& name, float v0, float v1, float v2, float v3);
 	void SetUniform3f(const std::string& name, float v0, float v1, float v2);

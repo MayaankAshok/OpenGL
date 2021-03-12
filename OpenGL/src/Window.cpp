@@ -41,6 +41,7 @@ Window::Window()
 	std::cout << glGetString(GL_VERSION) << std::endl;
 	glEnable(GL_DEPTH_TEST);
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+	glProvokingVertex(GL_FIRST_VERTEX_CONVENTION);
 
 	//Set up ImGUI
 	IMGUI_CHECKVERSION();
