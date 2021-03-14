@@ -2,7 +2,7 @@
 
 layout(location = 0)out vec4 o_Color;
 
-flat in vec3 v_normal;
+in vec3 v_normal;
 in vec3 fragPos;
 in vec3 v_Color;
 in vec2 v_texCoord;

@@ -23,6 +23,7 @@
 #include "VertexBuffer.h"
 #include "VertexArray.h"
 #include "VertexBufferLayout.h"
+#include "InstancedVB.h"
 #include "Shader.h"
 #include "Window.h"
 
@@ -35,6 +36,11 @@ struct Vec3
 struct Vec3i
 {
 	int x, y, z;
+};
+struct Vec2i
+{
+	int x, y;
+
 };
 struct Vec2
 {
@@ -51,7 +57,7 @@ struct Vertex
 	Vec3 position;
 	Vec3 normal;
 	Vec2 TexCoords;
-	Vec2 faceIndex;
+	int faceIndex;
 };
 
 float getMagn(Vec3 vec) {
@@ -63,110 +69,98 @@ Vec3 normalize(Vec3 vec) {
 	return { vec.x / magn, vec.y / magn,vec.z / magn };
 }
 
+
+struct MatProp {
+	std::vector<Vec2i> texAtlID;
+};
+
+struct BlockType {
+	static enum Types{
+		GRASS,
+	};
+
+	static std::vector<MatProp> blockProp;
+};
+
+std::vector<MatProp> BlockType::blockProp{
+	{{{2,0},{2,0},{2,0},{2,0},{0,0},{2,0}}}
+};
+
 struct Block
 {
 	static std::vector<Vertex> vertices;
 	//static std::vector<int> indices;
 	Vec3 position;
+	BlockType::Types blockMat;
+	MatProp blockProp;
 
-	Block(float x, float y, float z) {
-		position={ x,y,z };
+
+	Block(float x, float y, float z,BlockType::Types blockMaterial) {
+		position = { x,y,z };
+		blockMat = blockMaterial;
+		blockProp = BlockType::blockProp[blockMat];
 	}
 
 
 };
-//std::vector<Vertex> Block::vertices = {
-//			//position			//normal				// texcoord	//face
-//	Vertex{-1.0f, -1.0f,  1.0f,	 0.0f,  0.0f,  1.0f,	0.0f, 0.0f, 0.0f,0.0f },//0  Front
-//	Vertex{ 1.0f, -1.0f,  1.0f,	 0.0f,  0.0f,  1.0f,	1.0f, 0.0f,	0.0f,0.0f },//1,
-//	Vertex{ 1.0f,  1.0f,  1.0f,	 0.0f,  0.0f,  1.0f,	1.0f, 1.0f,	0.0f,0.0f },//2,
-//	Vertex{-1.0f, -1.0f,  1.0f,	 0.0f,  0.0f,  1.0f,	0.0f, 0.0f,	0.0f,0.0f },//0 
-//	Vertex{ 1.0f,  1.0f,  1.0f,	 0.0f,  0.0f,  1.0f,	1.0f, 1.0f,	0.0f,0.0f },//2,
-//	Vertex{-1.0f,  1.0f,  1.0f,	 0.0f,  0.0f,  1.0f,	0.0f, 1.0f,	0.0f,0.0f },//3,
+
+
+//struct ChunkLayer{
+//public:
+//	std::vector<std::vector<Block>> Mesh;
+//	ChunkLayer() {
+//		Mesh.resize(16,std::vector<Block>(16));
 //
-//	Vertex{ 1.0f, -1.0f,  1.0f,	 1.0f,  0.0f,  0.0f,	0.0f, 0.0f,	1.0f,0.0f },//1, right
-//	Vertex{ 1.0f, -1.0f, -1.0f,	 1.0f,  0.0f,  0.0f,	1.0f, 0.0f,	1.0f,0.0f },//5,
-//	Vertex{ 1.0f,  1.0f, -1.0f,	 1.0f,  0.0f,  0.0f,	1.0f, 1.0f,	1.0f,0.0f },//6
-//	Vertex{ 1.0f, -1.0f,  1.0f,	 1.0f,  0.0f,  0.0f,	0.0f, 0.0f,	1.0f,0.0f },//1,
-//	Vertex{ 1.0f,  1.0f, -1.0f,	 1.0f,  0.0f,  0.0f,	1.0f, 1.0f,	1.0f,0.0f },//6
-//	Vertex{ 1.0f,  1.0f,  1.0f,	 1.0f,  0.0f,  0.0f,	0.0f, 1.0f,	1.0f,0.0f },//2,
-//
-//	Vertex{ 1.0f, -1.0f, -1.0f,	 0.0f,  0.0f, -1.0f,	0.0f, 0.0f,	2.0f,0.0f },//5, back
-//	Vertex{-1.0f, -1.0f, -1.0f,	 0.0f,  0.0f, -1.0f,	1.0f, 0.0f,	2.0f,0.0f },//4,
-//	Vertex{-1.0f,  1.0f, -1.0f,	 0.0f,  0.0f, -1.0f,	1.0f, 1.0f,	2.0f,0.0f },//7
-//	Vertex{ 1.0f, -1.0f, -1.0f,	 0.0f,  0.0f, -1.0f,	0.0f, 0.0f,	2.0f,0.0f },//5,
-//	Vertex{-1.0f,  1.0f, -1.0f,	 0.0f,  0.0f, -1.0f,	1.0f, 1.0f,	2.0f,0.0f },//7
-//	Vertex{ 1.0f,  1.0f, -1.0f,	 0.0f,  0.0f, -1.0f,	0.0f, 1.0f,	2.0f,0.0f },//6
-//
-//	Vertex{-1.0f,  1.0f,  1.0f,	-1.0f,  0.0f,  0.0f,	0.0f, 0.0f,	3.0f,0.0f },//3, left
-//	Vertex{-1.0f,  1.0f, -1.0f,	-1.0f,  0.0f,  0.0f,	1.0f, 0.0f,	3.0f,0.0f },//7
-//	Vertex{-1.0f, -1.0f, -1.0f,	-1.0f,  0.0f,  0.0f,	1.0f, 1.0f,	3.0f,0.0f },//4,
-//	Vertex{-1.0f,  1.0f,  1.0f,	-1.0f,  0.0f,  0.0f,	0.0f, 0.0f,	3.0f,0.0f },//3,
-//	Vertex{-1.0f, -1.0f, -1.0f,	-1.0f,  0.0f,  0.0f,	1.0f, 1.0f,	3.0f,0.0f },//4,
-//	Vertex{-1.0f, -1.0f,  1.0f,	-1.0f,  0.0f,  0.0f,	0.0f, 1.0f,	3.0f,0.0f },//0 
-//
-//	Vertex{ 1.0f,  1.0f,  1.0f,	 0.0f,  1.0f,  0.0f,	0.0f, 0.0f,	4.0f,0.0f },//2, top
-//	Vertex{ 1.0f,  1.0f, -1.0f,	 0.0f,  1.0f,  0.0f,	1.0f, 0.0f,	4.0f,0.0f },//6
-//	Vertex{-1.0f,  1.0f, -1.0f,	 0.0f,  1.0f,  0.0f,	1.0f, 1.0f,	4.0f,0.0f },//7
-//	Vertex{ 1.0f,  1.0f,  1.0f,	 0.0f,  1.0f,  0.0f,	0.0f, 0.0f,	4.0f,0.0f },//2,
-//	Vertex{-1.0f,  1.0f, -1.0f,	 0.0f,  1.0f,  0.0f,	1.0f, 1.0f,	4.0f,0.0f },//7
-//	Vertex{-1.0f,  1.0f,  1.0f,	 0.0f,  1.0f,  0.0f,	0.0f, 1.0f,	4.0f,0.0f },//3,
-//	
-//	Vertex{-1.0f, -1.0f, -1.0f,	 0.0f, -1.0f,  0.0f,	0.0f, 0.0f,	5.0f,0.0f },//4, bottom
-//	Vertex{ 1.0f, -1.0f, -1.0f,	 0.0f, -1.0f,  0.0f,	1.0f, 0.0f,	5.0f,0.0f },//5,
-//	Vertex{ 1.0f, -1.0f,  1.0f,	 0.0f, -1.0f,  0.0f,	1.0f, 1.0f,	5.0f,0.0f },//1,
-//	Vertex{-1.0f, -1.0f, -1.0f,	 0.0f, -1.0f,  0.0f,	0.0f, 0.0f,	5.0f,0.0f },//4,
-//	Vertex{ 1.0f, -1.0f,  1.0f,	 0.0f, -1.0f,  0.0f,	1.0f, 1.0f,	5.0f,0.0f },//1,
-//	Vertex{-1.0f, -1.0f,  1.0f,	 0.0f, -1.0f,  0.0f,	0.0f, 1.0f,	5.0f,0.0f },//0 
-//
+//	}
 //};
+//
+
+
 std::vector<Vertex> Block::vertices = {
-			//position			//normal				// texcoord	//face
-	Vertex{-1.0f, -1.0f,  1.0f,	 0.0f,  0.0f,  1.0f,	0.0f, 0.0f, 0.0f,0.0f },//0 
-	Vertex{ 1.0f, -1.0f,  1.0f,	 0.0f,  0.0f,  1.0f,	1.0f, 0.0f,	0.0f,0.0f },//1,
-	Vertex{ 1.0f,  1.0f,  1.0f,	 0.0f,  0.0f,  1.0f,	1.0f, 1.0f,	0.0f,0.0f },//2,
-	Vertex{-1.0f, -1.0f,  1.0f,	 0.0f,  0.0f,  1.0f,	0.0f, 0.0f,	0.0f,0.0f },//0 
-	Vertex{ 1.0f,  1.0f,  1.0f,	 0.0f,  0.0f,  1.0f,	1.0f, 1.0f,	0.0f,0.0f },//2,
-	Vertex{-1.0f,  1.0f,  1.0f,	 0.0f,  0.0f,  1.0f,	0.0f, 1.0f,	0.0f,0.0f },//3,
+		//position			//normal				// texcoord	//face
+Vertex{-1.0f, -1.0f,  1.0f,	 0.0f,  0.0f,  1.0f,	0.0f, 0.0f, 0 },//0 
+Vertex{ 1.0f, -1.0f,  1.0f,	 0.0f,  0.0f,  1.0f,	1.0f, 0.0f,	0 },//1,
+Vertex{ 1.0f,  1.0f,  1.0f,	 0.0f,  0.0f,  1.0f,	1.0f, 1.0f,	0 },//2,
+Vertex{-1.0f, -1.0f,  1.0f,	 0.0f,  0.0f,  1.0f,	0.0f, 0.0f,	0 },//0 
+Vertex{ 1.0f,  1.0f,  1.0f,	 0.0f,  0.0f,  1.0f,	1.0f, 1.0f,	0 },//2,
+Vertex{-1.0f,  1.0f,  1.0f,	 0.0f,  0.0f,  1.0f,	0.0f, 1.0f,	0 },//3,
 
-	Vertex{ 1.0f, -1.0f,  1.0f,	 1.0f,  0.0f,  0.0f,	0.0f, 0.0f,	1.0f,0.0f },//1,
-	Vertex{ 1.0f, -1.0f, -1.0f,	 1.0f,  0.0f,  0.0f,	1.0f, 0.0f,	1.0f,0.0f },//5,
-	Vertex{ 1.0f,  1.0f, -1.0f,	 1.0f,  0.0f,  0.0f,	1.0f, 1.0f,	1.0f,0.0f },//6
-	Vertex{ 1.0f, -1.0f,  1.0f,	 1.0f,  0.0f,  0.0f,	0.0f, 0.0f,	1.0f,0.0f },//1,
-	Vertex{ 1.0f,  1.0f, -1.0f,	 1.0f,  0.0f,  0.0f,	1.0f, 1.0f,	1.0f,0.0f },//6
-	Vertex{ 1.0f,  1.0f,  1.0f,	 1.0f,  0.0f,  0.0f,	0.0f, 1.0f,	1.0f,0.0f },//2,
+Vertex{ 1.0f, -1.0f,  1.0f,	 1.0f,  0.0f,  0.0f,	0.0f, 0.0f,	1 },//1,
+Vertex{ 1.0f, -1.0f, -1.0f,	 1.0f,  0.0f,  0.0f,	1.0f, 0.0f,	1 },//5,
+Vertex{ 1.0f,  1.0f, -1.0f,	 1.0f,  0.0f,  0.0f,	1.0f, 1.0f,	1 },//6
+Vertex{ 1.0f, -1.0f,  1.0f,	 1.0f,  0.0f,  0.0f,	0.0f, 0.0f,	1 },//1,
+Vertex{ 1.0f,  1.0f, -1.0f,	 1.0f,  0.0f,  0.0f,	1.0f, 1.0f,	1 },//6
+Vertex{ 1.0f,  1.0f,  1.0f,	 1.0f,  0.0f,  0.0f,	0.0f, 1.0f,	1 },//2,
 
-	Vertex{ 1.0f, -1.0f, -1.0f,	 0.0f,  0.0f, -1.0f,	0.0f, 0.0f,	2.0f,0.0f },//5,
-	Vertex{-1.0f, -1.0f, -1.0f,	 0.0f,  0.0f, -1.0f,	1.0f, 0.0f,	2.0f,0.0f },//4,
-	Vertex{-1.0f,  1.0f, -1.0f,	 0.0f,  0.0f, -1.0f,	1.0f, 1.0f,	2.0f,0.0f },//7
-	Vertex{ 1.0f, -1.0f, -1.0f,	 0.0f,  0.0f, -1.0f,	0.0f, 0.0f,	2.0f,0.0f },//5,
-	Vertex{-1.0f,  1.0f, -1.0f,	 0.0f,  0.0f, -1.0f,	1.0f, 1.0f,	2.0f,0.0f },//7
-	Vertex{ 1.0f,  1.0f, -1.0f,	 0.0f,  0.0f, -1.0f,	0.0f, 1.0f,	2.0f,0.0f },//6
+Vertex{ 1.0f, -1.0f, -1.0f,	 0.0f,  0.0f, -1.0f,	0.0f, 0.0f,	2 },//5,
+Vertex{-1.0f, -1.0f, -1.0f,	 0.0f,  0.0f, -1.0f,	1.0f, 0.0f,	2 },//4,
+Vertex{-1.0f,  1.0f, -1.0f,	 0.0f,  0.0f, -1.0f,	1.0f, 1.0f,	2 },//7
+Vertex{ 1.0f, -1.0f, -1.0f,	 0.0f,  0.0f, -1.0f,	0.0f, 0.0f,	2 },//5,
+Vertex{-1.0f,  1.0f, -1.0f,	 0.0f,  0.0f, -1.0f,	1.0f, 1.0f,	2 },//7
+Vertex{ 1.0f,  1.0f, -1.0f,	 0.0f,  0.0f, -1.0f,	0.0f, 1.0f,	2 },//6
 
-	Vertex{-1.0f,  1.0f,  1.0f,	-1.0f,  0.0f,  0.0f,	1.0f, 1.0f,	3.0f,0.0f },//3,
-	Vertex{-1.0f,  1.0f, -1.0f,	-1.0f,  0.0f,  0.0f,	0.0f, 1.0f,	3.0f,0.0f },//7
-	Vertex{-1.0f, -1.0f, -1.0f,	-1.0f,  0.0f,  0.0f,	0.0f, 0.0f,	3.0f,0.0f },//4,
-	Vertex{-1.0f,  1.0f,  1.0f,	-1.0f,  0.0f,  0.0f,	1.0f, 1.0f,	3.0f,0.0f },//3,
-	Vertex{-1.0f, -1.0f, -1.0f,	-1.0f,  0.0f,  0.0f,	0.0f, 0.0f,	3.0f,0.0f },//4,
-	Vertex{-1.0f, -1.0f,  1.0f,	-1.0f,  0.0f,  0.0f,	1.0f, 0.0f,	3.0f,0.0f },//0 
+Vertex{-1.0f,  1.0f,  1.0f,	-1.0f,  0.0f,  0.0f,	1.0f, 1.0f,	3 },//3,
+Vertex{-1.0f,  1.0f, -1.0f,	-1.0f,  0.0f,  0.0f,	0.0f, 1.0f,	3 },//7
+Vertex{-1.0f, -1.0f, -1.0f,	-1.0f,  0.0f,  0.0f,	0.0f, 0.0f,	3 },//4,
+Vertex{-1.0f,  1.0f,  1.0f,	-1.0f,  0.0f,  0.0f,	1.0f, 1.0f,	3 },//3,
+Vertex{-1.0f, -1.0f, -1.0f,	-1.0f,  0.0f,  0.0f,	0.0f, 0.0f,	3 },//4,
+Vertex{-1.0f, -1.0f,  1.0f,	-1.0f,  0.0f,  0.0f,	1.0f, 0.0f,	3 },//0 
 
-	Vertex{ 1.0f,  1.0f,  1.0f,	 0.0f,  1.0f,  0.0f,	1.0f, 0.0f,	4.0f,0.0f },//2,
-	Vertex{ 1.0f,  1.0f, -1.0f,	 0.0f,  1.0f,  0.0f,	1.0f, 1.0f,	4.0f,0.0f },//6
-	Vertex{-1.0f,  1.0f, -1.0f,	 0.0f,  1.0f,  0.0f,	0.0f, 1.0f,	4.0f,0.0f },//7
-	Vertex{ 1.0f,  1.0f,  1.0f,	 0.0f,  1.0f,  0.0f,	1.0f, 0.0f,	4.0f,0.0f },//2,
-	Vertex{-1.0f,  1.0f, -1.0f,	 0.0f,  1.0f,  0.0f,	0.0f, 1.0f,	4.0f,0.0f },//7
-	Vertex{-1.0f,  1.0f,  1.0f,	 0.0f,  1.0f,  0.0f,	0.0f, 0.0f,	4.0f,0.0f },//3,
+Vertex{ 1.0f,  1.0f,  1.0f,	 0.0f,  1.0f,  0.0f,	1.0f, 0.0f,	4 },//2,
+Vertex{ 1.0f,  1.0f, -1.0f,	 0.0f,  1.0f,  0.0f,	1.0f, 1.0f,	4 },//6
+Vertex{-1.0f,  1.0f, -1.0f,	 0.0f,  1.0f,  0.0f,	0.0f, 1.0f,	4 },//7
+Vertex{ 1.0f,  1.0f,  1.0f,	 0.0f,  1.0f,  0.0f,	1.0f, 0.0f,	4 },//2,
+Vertex{-1.0f,  1.0f, -1.0f,	 0.0f,  1.0f,  0.0f,	0.0f, 1.0f,	4 },//7
+Vertex{-1.0f,  1.0f,  1.0f,	 0.0f,  1.0f,  0.0f,	0.0f, 0.0f,	4 },//3,
 
-	Vertex{-1.0f, -1.0f, -1.0f,	 0.0f, -1.0f,  0.0f,	0.0f, 0.0f,	5.0f,0.0f },//4,
-	Vertex{ 1.0f, -1.0f, -1.0f,	 0.0f, -1.0f,  0.0f,	1.0f, 0.0f,	5.0f,0.0f },//5,
-	Vertex{ 1.0f, -1.0f,  1.0f,	 0.0f, -1.0f,  0.0f,	1.0f, 1.0f,	5.0f,0.0f },//1,
-	Vertex{-1.0f, -1.0f, -1.0f,	 0.0f, -1.0f,  0.0f,	0.0f, 0.0f,	5.0f,0.0f },//4,
-	Vertex{ 1.0f, -1.0f,  1.0f,	 0.0f, -1.0f,  0.0f,	1.0f, 1.0f,	5.0f,0.0f },//1,
-	Vertex{-1.0f, -1.0f,  1.0f,	 0.0f, -1.0f,  0.0f,	0.0f, 1.0f,	5.0f,0.0f },//0 
+Vertex{-1.0f, -1.0f, -1.0f,	 0.0f, -1.0f,  0.0f,	0.0f, 0.0f,	5 },//4,
+Vertex{ 1.0f, -1.0f, -1.0f,	 0.0f, -1.0f,  0.0f,	1.0f, 0.0f,	5 },//5,
+Vertex{ 1.0f, -1.0f,  1.0f,	 0.0f, -1.0f,  0.0f,	1.0f, 1.0f,	5 },//1,
+Vertex{-1.0f, -1.0f, -1.0f,	 0.0f, -1.0f,  0.0f,	0.0f, 0.0f,	5 },//4,
+Vertex{ 1.0f, -1.0f,  1.0f,	 0.0f, -1.0f,  0.0f,	1.0f, 1.0f,	5 },//1,
+Vertex{-1.0f, -1.0f,  1.0f,	 0.0f, -1.0f,  0.0f,	0.0f, 1.0f,	5 },//0 
+}; 
 
-
-
-};
 
 struct Camera
 {
@@ -188,7 +182,7 @@ struct Camera
 class MainGame {
 public:
 	Window window{};
-	Block block{5,0,0};
+	Block block{5,0,0,BlockType::GRASS};
 	Camera camera{};
 	glm::vec3 rotation{ 0,0,0 };
 
@@ -222,16 +216,24 @@ public:
 		// Vertex Buffers
 		VertexBuffer vb(vertices, 124 * 10 * sizeof(float), GL_STATIC_DRAW);
 
+		//Instanced Vertex Buffers
+		float translations[] = {
+			0,0,0,
+		};
+		InstancedVB ivb(&translations[0],3*sizeof(float),GL_STATIC_DRAW);
+
 		// Vertex Array Setup
 		VertexArray va;
 		VertexBufferLayout layout;
-		layout.Push<float>(3);
-		layout.Push<float>(3);
-		layout.Push<float>(2);
-		layout.Push<float>(2);
+		layout.Push<float>(3,false);
+		layout.Push<float>(3, false);
+		layout.Push<float>(2, false);
+		layout.Push<int>(1, false);
+		//layout.Push<float>(3, true);
 
 
-		va.AddBuffer(vb, layout);
+
+		va.AddBuffer(vb,ivb, layout);
 
 		// Index buffer must come after Vertex array setup
 		//IndexBuffer ib(indices, 12 * 3);
@@ -302,6 +304,7 @@ public:
 			shader.SetUniformMat4f("u_view", view);
 			shader.SetUniformMat4f("u_projection", proj);
 			shader.SetUniformMat4f("u_normal", normalMat);
+			shader.SetUniform2iv("texID",6,&block.blockProp.texAtlID[0].x);
 
 			renderer.Draw(va, shader);
 
@@ -409,7 +412,7 @@ public:
 
 int main(void)
 {
-	MainGame maingame{};
+ 	MainGame maingame{};
 	print("done");
 	return 0;
 }

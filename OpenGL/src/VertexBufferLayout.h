@@ -7,11 +7,12 @@ struct VertexBufferElement
 	unsigned int type;
 	unsigned int count;
 	unsigned char normalized;
+	bool isInstanced;
 
 	static unsigned int GetSize(unsigned int type) {
 		switch (type) {
 			case GL_FLOAT:return 4;
-
+			case GL_INT:return 4;
 
 		}
 		return 0;
@@ -30,18 +31,18 @@ public:
 	{};
 
 	template<typename T>
-	void Push(unsigned int count) {
+	void Push(unsigned int count,bool instanced = false) {
 		static_assert(false);
 	}
 
 	template<>
-	void Push<float>(unsigned int count ) {
-		m_Elements.push_back({ GL_FLOAT,count,GL_FALSE });
+	void Push<float>(unsigned int count, bool instanced ) {
+		m_Elements.push_back({ GL_FLOAT,count,GL_FALSE,instanced });
 		m_Stride += count * sizeof(float);
 	}
 	template<>
-	void Push<int>(unsigned int count) {
-		m_Elements.push_back({ GL_INT,count,GL_FALSE });
+	void Push<int>(unsigned int count, bool instanced) {
+		m_Elements.push_back({ GL_INT,count,GL_FALSE,instanced });
 		m_Stride += count * sizeof(int);
 	}
 
