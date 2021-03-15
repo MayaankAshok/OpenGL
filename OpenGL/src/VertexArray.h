@@ -8,7 +8,8 @@ private:
 	unsigned int m_RendererID;
 
 public:
-	unsigned int m_VertexCount;
+	//unsigned int m_VertexCount;
+
 	
 	VertexArray();
 	~VertexArray();

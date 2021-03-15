@@ -83,7 +83,7 @@ struct BlockType {
 };
 
 std::vector<MatProp> BlockType::blockProp{
-	{{{2,0},{2,0},{2,0},{2,0},{0,0},{2,0}}}
+	{{{1,0},{1,0},{1,0},{1,0},{0,0},{2,0}}}
 };
 
 struct Block
@@ -104,6 +104,50 @@ struct Block
 
 };
 
+std::vector<Vertex> Block::vertices = {
+		//position			//normal				// texcoord	//face
+Vertex{-1.0f, -1.0f,  1.0f, 0.0f,  0.0f,  1.0f,	0.0f, 0.0f, 0 },//0 
+Vertex{ 1.0f, -1.0f,  1.0f, 0.0f,  0.0f,  1.0f,	1.0f, 0.0f,	0 },//1,
+Vertex{ 1.0f,  1.0f,  1.0f, 0.0f,  0.0f,  1.0f,	1.0f, 1.0f,	0 },//2,
+Vertex{-1.0f, -1.0f,  1.0f, 0.0f,  0.0f,  1.0f,	0.0f, 0.0f,	0 },//0 
+Vertex{ 1.0f,  1.0f,  1.0f, 0.0f,  0.0f,  1.0f,	1.0f, 1.0f,	0 },//2,
+Vertex{-1.0f,  1.0f,  1.0f, 0.0f,  0.0f,  1.0f,	0.0f, 1.0f,	0 },//3,
+
+Vertex{ 1.0f, -1.0f,  1.0f, 1.0f,  0.0f,  0.0f,	0.0f, 0.0f,	1 },//1,
+Vertex{ 1.0f, -1.0f, -1.0f, 1.0f,  0.0f,  0.0f,	1.0f, 0.0f,	1 },//5,
+Vertex{ 1.0f,  1.0f, -1.0f, 1.0f,  0.0f,  0.0f,	1.0f, 1.0f,	1 },//6
+Vertex{ 1.0f, -1.0f,  1.0f, 1.0f,  0.0f,  0.0f,	0.0f, 0.0f,	1 },//1,
+Vertex{ 1.0f,  1.0f, -1.0f, 1.0f,  0.0f,  0.0f,	1.0f, 1.0f,	1 },//6
+Vertex{ 1.0f,  1.0f,  1.0f, 1.0f,  0.0f,  0.0f,	0.0f, 1.0f,	1 },//2,
+
+Vertex{ 1.0f, -1.0f, -1.0f, 0.0f,  0.0f, -1.0f,	0.0f, 0.0f,	2 },//5,
+Vertex{-1.0f, -1.0f, -1.0f, 0.0f,  0.0f, -1.0f,	1.0f, 0.0f,	2 },//4,
+Vertex{-1.0f,  1.0f, -1.0f, 0.0f,  0.0f, -1.0f,	1.0f, 1.0f,	2 },//7
+Vertex{ 1.0f, -1.0f, -1.0f, 0.0f,  0.0f, -1.0f,	0.0f, 0.0f,	2 },//5,
+Vertex{-1.0f,  1.0f, -1.0f, 0.0f,  0.0f, -1.0f,	1.0f, 1.0f,	2 },//7
+Vertex{ 1.0f,  1.0f, -1.0f, 0.0f,  0.0f, -1.0f,	0.0f, 1.0f,	2 },//6
+
+Vertex{-1.0f,  1.0f, -1.0f, 1.0f,  0.0f,  0.0f,	0.0f, 1.0f,	3 },//7
+Vertex{-1.0f,  1.0f,  1.0f, 1.0f,  0.0f,  0.0f,	1.0f, 1.0f,	3 },//3,
+Vertex{-1.0f, -1.0f, -1.0f, 1.0f,  0.0f,  0.0f,	0.0f, 0.0f,	3 },//4,
+Vertex{-1.0f,  1.0f,  1.0f, 1.0f,  0.0f,  0.0f,	1.0f, 1.0f,	3 },//3,
+Vertex{-1.0f, -1.0f, -1.0f, 1.0f,  0.0f,  0.0f,	0.0f, 0.0f,	3 },//4,
+Vertex{-1.0f, -1.0f,  1.0f, 1.0f,  0.0f,  0.0f,	1.0f, 0.0f,	3 },//0 
+
+Vertex{ 1.0f,  1.0f,  1.0f, 0.0f,  1.0f,  0.0f,	1.0f, 0.0f,	4 },//2,
+Vertex{ 1.0f,  1.0f, -1.0f, 0.0f,  1.0f,  0.0f,	1.0f, 1.0f,	4 },//6
+Vertex{-1.0f,  1.0f, -1.0f, 0.0f,  1.0f,  0.0f,	0.0f, 1.0f,	4 },//7
+Vertex{ 1.0f,  1.0f,  1.0f, 0.0f,  1.0f,  0.0f,	1.0f, 0.0f,	4 },//2,
+Vertex{-1.0f,  1.0f, -1.0f, 0.0f,  1.0f,  0.0f,	0.0f, 1.0f,	4 },//7
+Vertex{-1.0f,  1.0f,  1.0f, 0.0f,  1.0f,  0.0f,	0.0f, 0.0f,	4 },//3,
+
+Vertex{-1.0f, -1.0f, -1.0f, 0.0f, -1.0f,  0.0f,	0.0f, 0.0f,	5 },//4,
+Vertex{ 1.0f, -1.0f, -1.0f, 0.0f, -1.0f,  0.0f,	1.0f, 0.0f,	5 },//5,
+Vertex{ 1.0f, -1.0f,  1.0f, 0.0f, -1.0f,  0.0f,	1.0f, 1.0f,	5 },//1,
+Vertex{-1.0f, -1.0f, -1.0f, 0.0f, -1.0f,  0.0f,	0.0f, 0.0f,	5 },//4,
+Vertex{ 1.0f, -1.0f,  1.0f, 0.0f, -1.0f,  0.0f,	1.0f, 1.0f,	5 },//1,
+Vertex{-1.0f, -1.0f,  1.0f, 0.0f, -1.0f,  0.0f,	0.0f, 1.0f,	5 },//0 
+}; 
 
 //struct ChunkLayer{
 //public:
@@ -116,50 +160,6 @@ struct Block
 //
 
 
-std::vector<Vertex> Block::vertices = {
-		//position			//normal				// texcoord	//face
-Vertex{-1.0f, -1.0f,  1.0f,	 0.0f,  0.0f,  1.0f,	0.0f, 0.0f, 0 },//0 
-Vertex{ 1.0f, -1.0f,  1.0f,	 0.0f,  0.0f,  1.0f,	1.0f, 0.0f,	0 },//1,
-Vertex{ 1.0f,  1.0f,  1.0f,	 0.0f,  0.0f,  1.0f,	1.0f, 1.0f,	0 },//2,
-Vertex{-1.0f, -1.0f,  1.0f,	 0.0f,  0.0f,  1.0f,	0.0f, 0.0f,	0 },//0 
-Vertex{ 1.0f,  1.0f,  1.0f,	 0.0f,  0.0f,  1.0f,	1.0f, 1.0f,	0 },//2,
-Vertex{-1.0f,  1.0f,  1.0f,	 0.0f,  0.0f,  1.0f,	0.0f, 1.0f,	0 },//3,
-
-Vertex{ 1.0f, -1.0f,  1.0f,	 1.0f,  0.0f,  0.0f,	0.0f, 0.0f,	1 },//1,
-Vertex{ 1.0f, -1.0f, -1.0f,	 1.0f,  0.0f,  0.0f,	1.0f, 0.0f,	1 },//5,
-Vertex{ 1.0f,  1.0f, -1.0f,	 1.0f,  0.0f,  0.0f,	1.0f, 1.0f,	1 },//6
-Vertex{ 1.0f, -1.0f,  1.0f,	 1.0f,  0.0f,  0.0f,	0.0f, 0.0f,	1 },//1,
-Vertex{ 1.0f,  1.0f, -1.0f,	 1.0f,  0.0f,  0.0f,	1.0f, 1.0f,	1 },//6
-Vertex{ 1.0f,  1.0f,  1.0f,	 1.0f,  0.0f,  0.0f,	0.0f, 1.0f,	1 },//2,
-
-Vertex{ 1.0f, -1.0f, -1.0f,	 0.0f,  0.0f, -1.0f,	0.0f, 0.0f,	2 },//5,
-Vertex{-1.0f, -1.0f, -1.0f,	 0.0f,  0.0f, -1.0f,	1.0f, 0.0f,	2 },//4,
-Vertex{-1.0f,  1.0f, -1.0f,	 0.0f,  0.0f, -1.0f,	1.0f, 1.0f,	2 },//7
-Vertex{ 1.0f, -1.0f, -1.0f,	 0.0f,  0.0f, -1.0f,	0.0f, 0.0f,	2 },//5,
-Vertex{-1.0f,  1.0f, -1.0f,	 0.0f,  0.0f, -1.0f,	1.0f, 1.0f,	2 },//7
-Vertex{ 1.0f,  1.0f, -1.0f,	 0.0f,  0.0f, -1.0f,	0.0f, 1.0f,	2 },//6
-
-Vertex{-1.0f,  1.0f,  1.0f,	-1.0f,  0.0f,  0.0f,	1.0f, 1.0f,	3 },//3,
-Vertex{-1.0f,  1.0f, -1.0f,	-1.0f,  0.0f,  0.0f,	0.0f, 1.0f,	3 },//7
-Vertex{-1.0f, -1.0f, -1.0f,	-1.0f,  0.0f,  0.0f,	0.0f, 0.0f,	3 },//4,
-Vertex{-1.0f,  1.0f,  1.0f,	-1.0f,  0.0f,  0.0f,	1.0f, 1.0f,	3 },//3,
-Vertex{-1.0f, -1.0f, -1.0f,	-1.0f,  0.0f,  0.0f,	0.0f, 0.0f,	3 },//4,
-Vertex{-1.0f, -1.0f,  1.0f,	-1.0f,  0.0f,  0.0f,	1.0f, 0.0f,	3 },//0 
-
-Vertex{ 1.0f,  1.0f,  1.0f,	 0.0f,  1.0f,  0.0f,	1.0f, 0.0f,	4 },//2,
-Vertex{ 1.0f,  1.0f, -1.0f,	 0.0f,  1.0f,  0.0f,	1.0f, 1.0f,	4 },//6
-Vertex{-1.0f,  1.0f, -1.0f,	 0.0f,  1.0f,  0.0f,	0.0f, 1.0f,	4 },//7
-Vertex{ 1.0f,  1.0f,  1.0f,	 0.0f,  1.0f,  0.0f,	1.0f, 0.0f,	4 },//2,
-Vertex{-1.0f,  1.0f, -1.0f,	 0.0f,  1.0f,  0.0f,	0.0f, 1.0f,	4 },//7
-Vertex{-1.0f,  1.0f,  1.0f,	 0.0f,  1.0f,  0.0f,	0.0f, 0.0f,	4 },//3,
-
-Vertex{-1.0f, -1.0f, -1.0f,	 0.0f, -1.0f,  0.0f,	0.0f, 0.0f,	5 },//4,
-Vertex{ 1.0f, -1.0f, -1.0f,	 0.0f, -1.0f,  0.0f,	1.0f, 0.0f,	5 },//5,
-Vertex{ 1.0f, -1.0f,  1.0f,	 0.0f, -1.0f,  0.0f,	1.0f, 1.0f,	5 },//1,
-Vertex{-1.0f, -1.0f, -1.0f,	 0.0f, -1.0f,  0.0f,	0.0f, 0.0f,	5 },//4,
-Vertex{ 1.0f, -1.0f,  1.0f,	 0.0f, -1.0f,  0.0f,	1.0f, 1.0f,	5 },//1,
-Vertex{-1.0f, -1.0f,  1.0f,	 0.0f, -1.0f,  0.0f,	0.0f, 1.0f,	5 },//0 
-}; 
 
 
 struct Camera
@@ -182,7 +182,7 @@ struct Camera
 class MainGame {
 public:
 	Window window{};
-	Block block{5,0,0,BlockType::GRASS};
+	Block block{0,0,0,BlockType::GRASS};
 	Camera camera{};
 	glm::vec3 rotation{ 0,0,0 };
 
@@ -190,10 +190,8 @@ public:
 	
 	MainGame() {
 
-		//int* indices = &block.indices[0];
 
 		glm::mat4 proj = glm::perspective(3.14159f * 0.5f, 1.777f, 0.1f, 100.0f);
-		//glm::mat4 proj = glm::ortho(-.96f, .96f, -.54f, .54f,-1.0f, 1.0f);
 		glm::mat4 view = glm::lookAt(camera.position, camera.target, camera.up);
 		
 		glm::mat4 model;
@@ -206,21 +204,20 @@ public:
 		glm::mat4 normalMat;
 
 
-		//print(block.vertices.data());
-		//print(&block.vertices[0]);
 		float* vertices = &block.vertices[0].position.x;
 
 		// Create Renderer
 		Renderer renderer;
-
+		 
 		// Vertex Buffers
-		VertexBuffer vb(vertices, 124 * 10 * sizeof(float), GL_STATIC_DRAW);
+		VertexBuffer vb(vertices, 6*6 * 9 * sizeof(float), GL_STATIC_DRAW);
 
 		//Instanced Vertex Buffers
 		float translations[] = {
-			0,0,0,
+			0,0,0,	0,1,0,
+			1,0,0,	0,0,0
 		};
-		InstancedVB ivb(&translations[0],3*sizeof(float),GL_STATIC_DRAW);
+		InstancedVB ivb(&translations[0],12*sizeof(float),GL_STATIC_DRAW);
 
 		// Vertex Array Setup
 		VertexArray va;
@@ -229,14 +226,11 @@ public:
 		layout.Push<float>(3, false);
 		layout.Push<float>(2, false);
 		layout.Push<int>(1, false);
-		//layout.Push<float>(3, true);
-
-
+		layout.Push<float>(3, true);
+		layout.Push<float>(3, true);
 
 		va.AddBuffer(vb,ivb, layout);
 
-		// Index buffer must come after Vertex array setup
-		//IndexBuffer ib(indices, 12 * 3);
 
 		unsigned int texture;
 		glGenTextures(1, &texture);
@@ -273,14 +267,14 @@ public:
 		float increment = 0.05f;
 
 		// Unbind All Buffers
-		shader.Unbind();
-		va.Unbind();
-		vb.Unbind();
+		//shader.Unbind();
 		//ib.Unbind();
 
 		//Main Loop
 		while (!glfwWindowShouldClose(window.window))
 		{
+			//glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+			//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 			renderer.Clear();
 			window.ImGuiRefresh(rotation);
 
@@ -294,19 +288,17 @@ public:
 
 			normalMat = modelX * modelY * modelZ;
 			model = modelTranslate * modelX * modelY * modelZ * modelScale;
-
 			glm::mat4 mvp = proj * view * modelX * modelZ * modelY * modelScale;
 
-
 			shader.Bind();
-			shader.SetUniform3f("u_Color", r, 0.2f, 0.8f);
 			shader.SetUniformMat4f("u_model", model);
 			shader.SetUniformMat4f("u_view", view);
 			shader.SetUniformMat4f("u_projection", proj);
 			shader.SetUniformMat4f("u_normal", normalMat);
 			shader.SetUniform2iv("texID",6,&block.blockProp.texAtlID[0].x);
 
-			renderer.Draw(va, shader);
+			va.Bind();
+			renderer.DrawInstanced(va, shader, 36, 2);
 
 			ImGui::Render();
 			ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
