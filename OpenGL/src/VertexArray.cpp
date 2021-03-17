@@ -11,27 +11,6 @@ VertexArray::~VertexArray()
 	glDeleteVertexArrays(1, &m_RendererID);
 }
 
-void VertexArray::AddBuffer(const VertexBuffer& vb, const VertexBufferLayout& layout)
-{
-	Bind();
-	vb.Bind();
-	//m_VertexCount = vb.m_Count;
-	const auto& elements = layout.GetElementsUI();
-	unsigned int offset = 0;
-	for (unsigned int i = 0; i < elements.size(); i++) {
-		const auto& element = elements[i];
-		glEnableVertexAttribArray(i);
-		if (element.type == GL_FLOAT) {
-			glVertexAttribPointer(i, element.count, element.type, element.normalized
-				, layout.GetStrideUI(), (const void*)offset);
-		}
-		else if (element.type == GL_INT) {
-			glVertexAttribIPointer(i, element.count, element.type
-				, layout.GetStrideUI(), (const void*)offset);
-		}
-		offset += element.GetSize(element.type) * element.count;
-	}
-}
 void VertexArray::AddBuffer(const VertexBuffer& vb,const InstancedVB& ivb, const VertexBufferLayout& layout)
 {
 	Bind();

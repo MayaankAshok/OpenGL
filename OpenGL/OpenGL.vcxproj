@@ -160,6 +160,7 @@
     <ClCompile Include="src\VertexArray.cpp" />
     <ClCompile Include="src\VertexBuffer.cpp" />
     <ClCompile Include="src\Window.cpp" />
+    <ClCompile Include="src\Texture.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\InstancedVB.h" />
@@ -461,6 +462,7 @@
     <ClInclude Include="src\VertexBuffer.h" />
     <ClInclude Include="src\VertexBufferLayout.h" />
     <ClInclude Include="src\Window.h" />
+    <ClInclude Include="src\Texture.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="src\vendor\glm\CMakeLists.txt" />
@@ -609,8 +611,10 @@
     <Font Include="res\fonts\Roboto-Medium.ttf" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="res\textures\test.png" />
     <Image Include="res\textures\DefaultPack.png" />
     <Image Include="res\textures\wall.jpg" />
+    <Image Include="res\textures\wall2.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

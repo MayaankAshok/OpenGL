@@ -60,6 +60,9 @@
     <ClCompile Include="src\InstancedVB.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\Texture.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\IndexBuffer.h">
@@ -959,6 +962,9 @@
     <ClInclude Include="src\InstancedVB.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\Texture.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="src\vendor\glm\CMakeLists.txt" />
@@ -1383,6 +1389,12 @@
       <Filter>Resource Files</Filter>
     </Image>
     <Image Include="res\textures\DefaultPack.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\wall2.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\test.png">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>

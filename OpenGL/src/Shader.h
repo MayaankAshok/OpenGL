@@ -8,9 +8,9 @@ private:
 	std::string m_VertFilepath;
 	std::string m_FragFilepath;
 
-	unsigned int m_RendererID;
 
 public:
+	unsigned int m_RendererID;
 	Shader(const std::string& VertFilePath, const std::string& FragFilePath);
 	~Shader();
 
