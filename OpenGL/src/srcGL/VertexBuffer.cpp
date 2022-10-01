@@ -8,6 +8,16 @@ VertexBuffer::VertexBuffer(const void* data, unsigned int size,int mode)
 	glBindBuffer(GL_ARRAY_BUFFER, m_RendererID);
 	glBufferData(GL_ARRAY_BUFFER, size, data, mode);
 }
+VertexBuffer::VertexBuffer()
+{
+	glGenBuffers(1, &m_RendererID);
+}
+void VertexBuffer::CreateData(const void* data, unsigned int size, int mode)
+{
+	m_Count = size / sizeof(float);
+	glBindBuffer(GL_ARRAY_BUFFER, m_RendererID);
+	glBufferData(GL_ARRAY_BUFFER, size, data, mode);
+}
 
 VertexBuffer::~VertexBuffer()
 {

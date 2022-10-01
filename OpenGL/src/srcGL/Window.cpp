@@ -10,8 +10,10 @@
 #define print(x) std::cout<<x<<std::endl
 
 
-Window::Window()
+
+Window::Window(Application* app)
 {
+	application = app;
 	//GLFWwindow* window;
 
 	/* Initialize the library */
@@ -31,6 +33,8 @@ Window::Window()
 		glfwTerminate();
 	}
 
+	
+
 	/* Make the window's context current */
 	glfwMakeContextCurrent(window);
 	if (glewInit() != GLEW_OK) {
@@ -39,7 +43,6 @@ Window::Window()
 	glfwSwapInterval(1);
 
 	std::cout << glGetString(GL_VERSION) << std::endl;
-	glEnable(GL_DEPTH_TEST);
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 	glProvokingVertex(GL_FIRST_VERTEX_CONVENTION);
 
@@ -76,6 +79,10 @@ void Window::ImGuiRefresh(glm::vec3 &rotation) {
 	ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 	ImGui::End();
 
+}
+void Window::SetMouseCallback(void(*func)(GLFWwindow*,double,double)) {
+
+	glfwSetCursorPosCallback(window, func);
 }
 
 Window::~Window()
