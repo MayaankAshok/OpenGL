@@ -4,12 +4,16 @@
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 
+class Application;
+
 class Window
 {
 public:
-	GLFWwindow* window;;
-	Window();
+	Application* application;
+	GLFWwindow* window;
+	Window(Application* app);
 	void ImGuiRefresh(glm::vec3& rotation);
+	void SetMouseCallback(void(*func)(GLFWwindow*, double, double));
 	~Window();
 };
 

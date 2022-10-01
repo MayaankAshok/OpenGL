@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -89,11 +89,12 @@
       <PreprocessorDefinitions>GLEW_STATIC;WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir)OpenGL\src\vendor;$(SolutionDir)Dependecies\GLFW\include;$(SolutionDir)Dependecies\GLEW\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)Dependecies\GLFW\lib-vc2019;$(SolutionDir)Dependecies\GLEW\lib\Release\Win32;</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)Dependecies\GLFW\lib-vc2019;$(SolutionDir)Dependecies\GLEW\lib\Release\Win32</AdditionalLibraryDirectories>
       <AdditionalDependencies>glew32s.lib;glfw3.lib;opengl32.lib;User32.lib;Gdi32.lib;Shell32.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -106,13 +107,14 @@
       <PreprocessorDefinitions>GLEW_STATIC;WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir)OpenGL\src\vendor;$(SolutionDir)Dependecies\GLFW\include;$(SolutionDir)Dependecies\GLEW\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)Dependecies\GLFW\lib-vc2019;$(SolutionDir)Dependecies\GLEW\lib\Release\Win32;</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)Dependecies\GLFW\lib-vc2019;$(SolutionDir)Dependecies\GLEW\lib\Release\Win32</AdditionalLibraryDirectories>
       <AdditionalDependencies>glew32s.lib;glfw3.lib;opengl32.lib;User32.lib;Gdi32.lib;Shell32.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -145,11 +147,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="src\InstancedVB.cpp" />
+    <ClCompile Include="src\Chunk.cpp" />
+    <ClCompile Include="src\Block.cpp" />
+    <ClCompile Include="src\srcGL\InstancedVB.cpp" />
     <ClCompile Include="src\Application.cpp" />
-    <ClCompile Include="src\IndexBuffer.cpp" />
-    <ClCompile Include="src\Renderer.cpp" />
-    <ClCompile Include="src\Shader.cpp" />
+    <ClCompile Include="src\srcGL\IndexBuffer.cpp" />
+    <ClCompile Include="src\srcGL\Renderer.cpp" />
+    <ClCompile Include="src\srcGL\Shader.cpp" />
+    <ClCompile Include="src\Structures.cpp" />
     <ClCompile Include="src\vendor\glm\detail\glm.cpp" />
     <ClCompile Include="src\vendor\ImGui\imgui.cpp" />
     <ClCompile Include="src\vendor\ImGui\imgui_demo.cpp" />
@@ -157,16 +162,19 @@
     <ClCompile Include="src\vendor\ImGui\imgui_impl_glfw.cpp" />
     <ClCompile Include="src\vendor\ImGui\imgui_impl_opengl3.cpp" />
     <ClCompile Include="src\vendor\ImGui\imgui_widgets.cpp" />
-    <ClCompile Include="src\VertexArray.cpp" />
-    <ClCompile Include="src\VertexBuffer.cpp" />
-    <ClCompile Include="src\Window.cpp" />
-    <ClCompile Include="src\Texture.cpp" />
+    <ClCompile Include="src\srcGL\VertexArray.cpp" />
+    <ClCompile Include="src\srcGL\VertexBuffer.cpp" />
+    <ClCompile Include="src\srcGL\Window.cpp" />
+    <ClCompile Include="src\srcGL\Texture.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\InstancedVB.h" />
-    <ClInclude Include="src\IndexBuffer.h" />
-    <ClInclude Include="src\Renderer.h" />
-    <ClInclude Include="src\Shader.h" />
+    <ClInclude Include="src\Chunk.h" />
+    <ClInclude Include="src\Block.h" />
+    <ClInclude Include="src\srcGL\InstancedVB.h" />
+    <ClInclude Include="src\srcGL\IndexBuffer.h" />
+    <ClInclude Include="src\srcGL\Renderer.h" />
+    <ClInclude Include="src\srcGL\Shader.h" />
+    <ClInclude Include="src\Structures.h" />
     <ClInclude Include="src\vendor\glm\common.hpp" />
     <ClInclude Include="src\vendor\glm\detail\compute_common.hpp" />
     <ClInclude Include="src\vendor\glm\detail\compute_vector_relational.hpp" />
@@ -457,19 +465,22 @@
     <ClInclude Include="src\vendor\ImGui\imstb_rectpack.h" />
     <ClInclude Include="src\vendor\ImGui\imstb_textedit.h" />
     <ClInclude Include="src\vendor\ImGui\imstb_truetype.h" />
+    <ClInclude Include="src\vendor\Perlin\PerlinNoise.hpp" />
     <ClInclude Include="src\vendor\stb\stb_image.h" />
-    <ClInclude Include="src\VertexArray.h" />
-    <ClInclude Include="src\VertexBuffer.h" />
-    <ClInclude Include="src\VertexBufferLayout.h" />
-    <ClInclude Include="src\Window.h" />
-    <ClInclude Include="src\Texture.h" />
+    <ClInclude Include="src\srcGL\VertexArray.h" />
+    <ClInclude Include="src\srcGL\VertexBuffer.h" />
+    <ClInclude Include="src\srcGL\VertexBufferLayout.h" />
+    <ClInclude Include="src\srcGL\Window.h" />
+    <ClInclude Include="src\srcGL\Texture.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="src\vendor\glm\CMakeLists.txt" />
   </ItemGroup>
   <ItemGroup>
     <None Include="res\shader\fragment.shader" />
+    <None Include="res\shader\fragment2.shader" />
     <None Include="res\shader\vertex.shader" />
+    <None Include="res\shader\vertex2.shader" />
     <None Include="src\vendor\glm\detail\func_common.inl" />
     <None Include="src\vendor\glm\detail\func_common_simd.inl" />
     <None Include="src\vendor\glm\detail\func_exponential.inl" />
